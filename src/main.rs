@@ -19,13 +19,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     loop {
         let mut line = String::new();
-        let result = reader.read_line(&mut line);
-        let len = match result {
-            Ok(len) => len,
-            Err(error) => {
-                return Err(error.into());
-            }
-        };
+        let len = reader.read_line(&mut line)?;
         if len <= 0 {
             break;
         }
