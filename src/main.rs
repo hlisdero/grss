@@ -46,7 +46,7 @@ fn main() -> Result<()> {
     let args = Cli::parse();
     info!("Opening file");
     let file = File::open(&args.path)
-        .with_context(|| format!("Could not open file `{}`", &args.path.to_string_lossy()))?;
+        .with_context(|| format!("Could not open file `{}`", args.path.display()))?;
     let mut reader = BufReader::new(file);
 
     find_matches(&mut reader, &args.pattern, &mut stdout_handle)?;
