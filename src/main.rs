@@ -1,6 +1,7 @@
+use anyhow::Ok;
 use anyhow::{Context, Result};
 use clap::Parser;
-use log::{info, warn};
+use log::info;
 use std::fs::File;
 use std::io::BufRead;
 use std::io::BufReader;
@@ -15,6 +16,28 @@ struct Cli {
     path: std::path::PathBuf,
 }
 
+fn find_matches(
+    reader: &mut BufReader<File>,
+    pattern: &str,
+    writer: &mut impl std::io::Write,
+) -> Result<()> {
+    loop {
+        let mut line = String::new();
+        info!("Reading line from file");
+        let len = reader
+            .read_line(&mut line)
+            .with_context(|| "Could not read line from file")?;
+        if len <= 0 {
+            break;
+        }
+        info!("Checking if line contains the pattern");
+        if line.contains(pattern) {
+            writeln!(writer, "{}", line).with_context(|| "Could not write to stdout")?;
+        }
+    }
+    Ok(())
+}
+
 fn main() -> Result<()> {
     env_logger::init();
     let stdout = io::stdout(); // get the global stdout entity
@@ -26,20 +49,8 @@ fn main() -> Result<()> {
         .with_context(|| format!("Could not open file `{}`", &args.path.to_string_lossy()))?;
     let mut reader = BufReader::new(file);
 
-    loop {
-        let mut line = String::new();
-        info!("Reading line from file");
-        let len = reader
-            .read_line(&mut line)
-            .with_context(|| format!("Could not read file `{}`", &args.path.to_string_lossy()))?;
-        if len <= 0 {
-            break;
-        }
-        info!("Checking if line contains the pattern");
-        if line.contains(&args.pattern) {
-            writeln!(stdout_handle, "{}", line).with_context(|| "Could not write to stdout")?;
-        }
-    }
+    find_matches(&mut reader, &args.pattern, &mut stdout_handle)?;
+
     stdout_handle
         .flush()
         .with_context(|| "Could not flush output to stdout")?;
