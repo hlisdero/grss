@@ -12,7 +12,7 @@ struct Cli {
     path: std::path::PathBuf,
 }
 
-fn main() {
+fn main() -> Result<(), Box<dyn std::error::Error>> {
     let args = Cli::parse();
     let file = File::open(&args.path).expect("could not read file");
     let mut reader = BufReader::new(file);
@@ -23,7 +23,7 @@ fn main() {
         let len = match result {
             Ok(len) => len,
             Err(error) => {
-                panic!("Can't deal with {}, just exit here", error);
+                return Err(error.into());
             }
         };
         if len <= 0 {
@@ -33,4 +33,5 @@ fn main() {
             print!("{}", line);
         }
     }
+    Ok(())
 }
