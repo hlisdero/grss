@@ -1,9 +1,8 @@
-use anyhow::Ok;
 use anyhow::{Context, Result};
 use clap::Parser;
+use grss::find_matches;
 use log::info;
 use std::fs::File;
-use std::io::BufRead;
 use std::io::BufReader;
 use std::io::{self, Write};
 
@@ -14,36 +13,6 @@ struct Cli {
     pattern: String,
     /// The path to the file to read
     path: std::path::PathBuf,
-}
-
-fn check_match(content: &str, pattern: &str, writer: &mut impl std::io::Write) -> Result<()> {
-    if content.contains(pattern) {
-        writeln!(writer, "{}", content).with_context(|| "Could not write to stdout")?;
-    }
-    Ok(())
-}
-
-fn find_matches<R>(
-    reader: &mut BufReader<R>,
-    pattern: &str,
-    writer: &mut impl std::io::Write,
-) -> Result<()>
-where
-    R: std::io::Read,
-{
-    loop {
-        let mut line = String::new();
-        info!("Reading line from file");
-        let len = reader
-            .read_line(&mut line)
-            .with_context(|| "Could not read line from file")?;
-        if len <= 0 {
-            break;
-        }
-        info!("Checking if line contains the pattern");
-        check_match(&line, pattern, writer)?;
-    }
-    Ok(())
 }
 
 fn main() -> Result<()> {
@@ -63,11 +32,4 @@ fn main() -> Result<()> {
         .flush()
         .with_context(|| "Could not flush output to stdout")?;
     Ok(())
-}
-
-#[test]
-fn check_match_detects_match() {
-    let mut result = Vec::new();
-    check_match("lorem ipsum", "lorem", &mut result).unwrap();
-    assert_eq!(result, b"lorem ipsum\n");
 }
