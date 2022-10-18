@@ -19,9 +19,13 @@ fn main() {
 
     loop {
         let mut line = String::new();
-        let len = reader
-            .read_line(&mut line)
-            .expect("error when reading line");
+        let result = reader.read_line(&mut line);
+        let len = match result {
+            Ok(len) => len,
+            Err(error) => {
+                panic!("Can't deal with {}, just exit here", error);
+            }
+        };
         if len <= 0 {
             break;
         }
