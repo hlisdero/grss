@@ -23,7 +23,7 @@ fn main() -> Result<()> {
     let args = Cli::parse();
     info!("Opening file");
     let file = File::open(&args.path)
-        .with_context(|| format!("could not open file `{}`", &args.path.to_string_lossy()))?;
+        .with_context(|| format!("Could not open file `{}`", &args.path.to_string_lossy()))?;
     let mut reader = BufReader::new(file);
 
     loop {
@@ -31,17 +31,17 @@ fn main() -> Result<()> {
         info!("Reading line from file");
         let len = reader
             .read_line(&mut line)
-            .with_context(|| format!("could not read file `{}`", &args.path.to_string_lossy()))?;
+            .with_context(|| format!("Could not read file `{}`", &args.path.to_string_lossy()))?;
         if len <= 0 {
             break;
         }
         info!("Checking if line contains the pattern");
         if line.contains(&args.pattern) {
-            writeln!(stdout_handle, "{}", line).with_context(|| "could not write to stdout")?;
+            writeln!(stdout_handle, "{}", line).with_context(|| "Could not write to stdout")?;
         }
     }
     stdout_handle
         .flush()
-        .with_context(|| "could not flush output to stdout")?;
+        .with_context(|| "Could not flush output to stdout")?;
     Ok(())
 }
