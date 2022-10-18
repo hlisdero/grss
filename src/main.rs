@@ -1,3 +1,4 @@
+use anyhow::{Context, Result};
 use clap::Parser;
 use std::fs::File;
 use std::io::BufRead;
@@ -12,14 +13,17 @@ struct Cli {
     path: std::path::PathBuf,
 }
 
-fn main() -> Result<(), Box<dyn std::error::Error>> {
+fn main() -> Result<()> {
     let args = Cli::parse();
-    let file = File::open(&args.path).expect("could not read file");
+    let file = File::open(&args.path)
+        .with_context(|| format!("could not open file `{}`", &args.path.to_string_lossy()))?;
     let mut reader = BufReader::new(file);
 
     loop {
         let mut line = String::new();
-        let len = reader.read_line(&mut line)?;
+        let len = reader
+            .read_line(&mut line)
+            .with_context(|| format!("could not read file `{}`", &args.path.to_string_lossy()))?;
         if len <= 0 {
             break;
         }
