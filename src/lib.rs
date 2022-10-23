@@ -5,7 +5,7 @@ use std::io::BufReader;
 
 pub fn check_match(content: &str, pattern: &str, writer: &mut impl std::io::Write) -> Result<()> {
     if content.contains(pattern) {
-        writeln!(writer, "{}", content).with_context(|| "Could not write to stdout")?;
+        write!(writer, "{}", content).with_context(|| "Could not write to stdout")?;
     }
     Ok(())
 }
@@ -37,5 +37,5 @@ where
 fn check_match_detects_match() {
     let mut result = Vec::new();
     check_match("lorem ipsum", "lorem", &mut result).unwrap();
-    assert_eq!(result, b"lorem ipsum\n");
+    assert_eq!(result, b"lorem ipsum");
 }
