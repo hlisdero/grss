@@ -3,6 +3,7 @@ name = "grss"
 version = "0.1.0"
 description = "A simple grep tool written in Rust"
 keywords = ["grep", "cli-tools", "search"]
+categories = ["command-line-utilities"]
 repository = "https://github.com/hlisdero/grss"
 homepage = "https://github.com/hlisdero/grss"
 authors = ["Horacio Lisdero Scaffino <hlisdero@users.noreply.github.com>"]
