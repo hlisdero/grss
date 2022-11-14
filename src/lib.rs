@@ -3,6 +3,11 @@ use log::info;
 use std::io::BufRead;
 use std::io::BufReader;
 
+/// Check if the string contains the given pattern.
+///
+/// # Errors
+///
+/// If the writer fails, then an error is returned.
 pub fn check_match(content: &str, pattern: &str, writer: &mut impl std::io::Write) -> Result<()> {
     if content.contains(pattern) {
         write!(writer, "{}", content).with_context(|| "Could not write to stdout")?;
@@ -10,6 +15,11 @@ pub fn check_match(content: &str, pattern: &str, writer: &mut impl std::io::Writ
     Ok(())
 }
 
+/// Find matches in each line returned by reader
+///
+/// # Errors
+///
+/// If the reader or the writer fail, then an error is returned.
 pub fn find_matches<R>(
     reader: &mut BufReader<R>,
     pattern: &str,
@@ -24,7 +34,7 @@ where
         let len = reader
             .read_line(&mut line)
             .with_context(|| "Could not read line from file")?;
-        if len <= 0 {
+        if len == 0 {
             break;
         }
         info!("Checking if line contains the pattern");
