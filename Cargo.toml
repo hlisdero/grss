@@ -21,5 +21,5 @@ log = "0.4.17"
 
 [dev-dependencies]
 assert_cmd = "2.0.5"
-assert_fs = "1.0.7"
+assert_fs = "1.0.9"
 predicates = "2.1.1"
