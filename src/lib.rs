@@ -10,7 +10,7 @@ use std::io::BufReader;
 /// If the writer fails, then an error is returned.
 pub fn check_match(content: &str, pattern: &str, writer: &mut impl std::io::Write) -> Result<()> {
     if content.contains(pattern) {
-        write!(writer, "{}", content).with_context(|| "Could not write to stdout")?;
+        write!(writer, "{content}").with_context(|| "Could not write to stdout")?;
     }
     Ok(())
 }
